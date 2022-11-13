@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/material_dynamic_neutral80"
+    tools:context=".ui.fragment.HomeFragment">
+
+    <ImageView
+        android:id="@+id/temp_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/countryTV"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+
+    <TextView
+        android:id="@+id/tempTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-10 С"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/temp_icon"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/temp_icon"
+        app:layout_constraintTop_toBottomOf="@+id/temp_icon"
+        app:layout_constraintVertical_bias="0.03" />
+
+    <TextView
+        android:id="@+id/cityTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="City"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/skyTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sky"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tempTV"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/tempTV"
+        app:layout_constraintTop_toBottomOf="@+id/tempTV"
+        app:layout_constraintVertical_bias="0.05" />
+
+    <TextView
+        android:id="@+id/countryTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Country"
+        app:layout_constraintEnd_toEndOf="@+id/cityTV"
+        app:layout_constraintStart_toStartOf="@+id/cityTV"
+        app:layout_constraintTop_toBottomOf="@+id/cityTV" />
+
+    <TextView
+        android:id="@+id/windTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wind speed"
+        app:layout_constraintBottom_toTopOf="@+id/windDirTV"
+        app:layout_constraintEnd_toEndOf="@+id/skyTV"
+        app:layout_constraintStart_toStartOf="@+id/skyTV"
+        app:layout_constraintTop_toBottomOf="@+id/tempFeelTV" />
+
+    <TextView
+        android:id="@+id/windDirTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin = "5dp"
+        android:text="Wind direction"
+        app:layout_constraintEnd_toEndOf="@+id/skyTV"
+        app:layout_constraintStart_toStartOf="@+id/skyTV"
+        app:layout_constraintTop_toBottomOf="@+id/windTV" />
+
+    <TextView
+        android:id="@+id/tempFeelTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/windTV"
+        app:layout_constraintEnd_toEndOf="@+id/skyTV"
+        app:layout_constraintStart_toStartOf="@+id/skyTV"
+        app:layout_constraintTop_toBottomOf="@+id/skyTV"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weekTempTV" />
+
+    <TextView
+        android:id="@+id/weekTempTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/week_temp_text"
+        android:layout_margin="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/windDirTV" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
