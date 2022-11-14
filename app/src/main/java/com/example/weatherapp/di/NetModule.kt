@@ -22,7 +22,7 @@ private const val QUERY_API_KEY = "appid"
 private const val METRIC = "metric"
 private const val QUERY_UNITS = "units"
 
-private const val LANG_CODE = "en"
+private const val LANG_CODE = "ru"
 private const val QUERY_LANG = "lang"
 
 @Module

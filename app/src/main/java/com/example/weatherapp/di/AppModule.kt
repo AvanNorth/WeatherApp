@@ -5,14 +5,11 @@ import com.example.weatherapp.data.api.Api
 import com.example.weatherapp.data.api.mapper.WeatherMapper
 import com.example.weatherapp.domain.conventer.WindConverter
 import com.example.weatherapp.domain.repository.WeatherRepository
-import com.example.weatherapp.domain.usecase.GetNearCitiesUseCase
-import com.example.weatherapp.domain.usecase.GetWeatherByIdUseCase
-import com.example.weatherapp.domain.usecase.GetWeatherByNameUseCase
+import com.example.weatherapp.domain.usecase.WeatherUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -37,28 +34,9 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideNearCitiesUseCase(
+    fun provideWeatherUseCase(
         weatherRepository: WeatherRepository
-    ): GetNearCitiesUseCase = GetNearCitiesUseCase(
+    ): WeatherUseCase = WeatherUseCase(
         weatherRepository = weatherRepository,
-        dispatcher = Dispatchers.Default
-    )
-
-    @Provides
-    @Singleton
-    fun provideWeatherByIdUseCase(
-        weatherRepository: WeatherRepository
-    ): GetWeatherByIdUseCase = GetWeatherByIdUseCase(
-        weatherRepository = weatherRepository,
-        dispatcher = Dispatchers.Default
-    )
-
-    @Provides
-    @Singleton
-    fun getWeatherByNameUseCase(
-        weatherRepository: WeatherRepository
-    ): GetWeatherByNameUseCase = GetWeatherByNameUseCase(
-        weatherRepository = weatherRepository,
-        dispatcher = Dispatchers.Default
     )
 }
