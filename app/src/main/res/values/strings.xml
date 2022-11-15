@@ -4,4 +4,8 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="week_temp_text">Погода на неделю</string>
+    <string name="wind_spd_text">Ветер %1$.1f км/ч</string>
+    <string name="temp_text">%1$.1f C</string>
+    <string name="wind_dir_text">направление ветра %1$s</string>
+    <string name="feel_like_text">ощущается как %1$.1f</string>
 </resources>

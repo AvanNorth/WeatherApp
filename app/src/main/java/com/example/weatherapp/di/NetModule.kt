@@ -1,7 +1,7 @@
 package com.example.weatherapp.di
 
-import androidx.viewbinding.BuildConfig
 import com.example.weatherapp.data.api.Api
+import com.example.weatherapp.data.api.GeoCodeApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,13 +14,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+private const val BASE_URL = "http://api.weatherunlocked.com/api/"
+private const val GEO_BASE_URL = "http://api.openweathermap.org/geo/1.0/"
 
-private const val API_KEY = "27c7562ae39fc5e14083e53be2619ffe"
-private const val QUERY_API_KEY = "appid"
+private const val APP_KEY = "0c156d8e"
+private const val QUERY_APP_KEY = "app_id"
 
-private const val METRIC = "metric"
-private const val QUERY_UNITS = "units"
+private const val GEO_APP_KEY = "27c7562ae39fc5e14083e53be2619ffe"
+private const val GEO_QUERY_APP_KEY = "appid"
+
+private const val API_KEY = "0a29bc44d7c193da4a1f63baf872b442"
+private const val QUERY_API_KEY = "app_key"
 
 private const val LANG_CODE = "ru"
 private const val QUERY_LANG = "lang"
@@ -36,6 +40,7 @@ class NetModule {
         val original = chain.request()
         val newURL = original.url.newBuilder()
             .addQueryParameter(QUERY_API_KEY, API_KEY)
+            .addQueryParameter(QUERY_APP_KEY, APP_KEY)
             .build()
 
         chain.proceed(
@@ -47,11 +52,11 @@ class NetModule {
 
     @Provides
     @Singleton
-    @UnitsInterceptor
-    fun provideUnitsInterceptor(): Interceptor = Interceptor { chain ->
+    @GeoApiKeyInterceptor
+    fun provideGeoApiKeyInterceptor(): Interceptor = Interceptor { chain ->
         val original = chain.request()
         val newURL = original.url.newBuilder()
-            .addQueryParameter(QUERY_UNITS, METRIC)
+            .addQueryParameter(GEO_QUERY_APP_KEY, GEO_APP_KEY)
             .build()
 
         chain.proceed(
@@ -82,22 +87,36 @@ class NetModule {
     @HttpClient
     fun provideHttpClient(
         @ApiKeyInterceptor apiKeyInterceptor: Interceptor,
-        @UnitsInterceptor unitsInterceptor: Interceptor,
         @LangInterceptor langInterceptor: Interceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(apiKeyInterceptor)
-            .addInterceptor(unitsInterceptor)
             .addInterceptor(langInterceptor)
             .also {
-                if (BuildConfig.DEBUG) {
-                    it.addInterceptor(
-                        HttpLoggingInterceptor()
-                            .setLevel(
-                                HttpLoggingInterceptor.Level.BODY
-                            )
-                    )
-                }
+                it.addInterceptor(
+                    HttpLoggingInterceptor()
+                        .setLevel(
+                            HttpLoggingInterceptor.Level.BODY
+                        )
+                )
+            }
+            .build()
+
+    @Provides
+    @Singleton
+    @GeoHttpClient
+    fun provideGeoHttpClient(
+        @GeoApiKeyInterceptor GeoApiKeyInterceptor: Interceptor
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(GeoApiKeyInterceptor)
+            .also {
+                it.addInterceptor(
+                    HttpLoggingInterceptor()
+                        .setLevel(
+                            HttpLoggingInterceptor.Level.BODY
+                        )
+                )
             }
             .build()
 
@@ -112,6 +131,18 @@ class NetModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(Api::class.java)
+
+    @Provides
+    @Singleton
+    fun provideGeoApi(
+        @GeoHttpClient okhttp: OkHttpClient
+    ): GeoCodeApi =
+        Retrofit.Builder()
+            .baseUrl(GEO_BASE_URL)
+            .client(okhttp)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(GeoCodeApi::class.java)
 }
 
 //annotations
@@ -125,8 +156,12 @@ annotation class HttpClient
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
-annotation class UnitsInterceptor
+annotation class GeoHttpClient
 
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ApiKeyInterceptor
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class GeoApiKeyInterceptor

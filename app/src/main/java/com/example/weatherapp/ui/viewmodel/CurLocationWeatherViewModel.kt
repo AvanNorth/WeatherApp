@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.domain.entity.City
 import com.example.weatherapp.domain.entity.Weather
+import com.example.weatherapp.domain.entity.WeatherForecast
 import com.example.weatherapp.domain.repository.WeatherRepository
+import com.example.weatherapp.domain.usecase.GeoUseCase
 import com.example.weatherapp.domain.usecase.WeatherUseCase
 import javax.inject.Inject;
 
@@ -14,13 +17,18 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CurLocationWeatherViewModel @Inject constructor(
-    private val weatherUseCase: WeatherUseCase
+    private val weatherUseCase: WeatherUseCase,
+    private val geoUseCase: GeoUseCase
 ) : ViewModel() {
 
     private var _weather: MutableLiveData<Result<Weather>> = MutableLiveData()
     val weather: LiveData<Result<Weather>> = _weather
 
-    //private var _weatherList: MutableLiveData<Result<>>
+    private var _city: MutableLiveData<Result<City>> = MutableLiveData()
+    val city: LiveData<Result<City>> = _city
+
+    private var _weatherForecast: MutableLiveData<Result<WeatherForecast>> = MutableLiveData()
+    val weatherForecast: LiveData<Result<WeatherForecast>> = _weatherForecast
 
     fun getWeatherByCoords(lat: Double, lon: Double) = viewModelScope.launch {
         try {
@@ -31,6 +39,18 @@ class CurLocationWeatherViewModel @Inject constructor(
     }
 
     fun getWeekWeatherByCoords(lat: Double, lon: Double) = viewModelScope.launch {
+        try {
+            _weatherForecast.value = Result.success(weatherUseCase.getWeatherForecast(lat, lon))
+        } catch (ex: Exception) {
+            _weatherForecast.value  = Result.failure(ex)
+        }
+    }
 
+    fun getCity(lat: Double, lon: Double) = viewModelScope.launch{
+        try {
+            _city.value = Result.success(geoUseCase.getCity(lat, lon))
+        } catch (ex: Exception){
+            _city.value = Result.failure(ex)
+        }
     }
 }

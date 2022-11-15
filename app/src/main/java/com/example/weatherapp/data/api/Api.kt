@@ -1,27 +1,24 @@
 package com.example.weatherapp.data.api
 
-import com.example.weatherapp.data.api.model.WeatherResponse
-import com.example.weatherapp.data.api.model.WeatherResponseList
+import com.example.weatherapp.data.api.model.WeatherUnlocked
+import com.example.weatherapp.data.api.model.WeatherUnlockedForecast
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface Api {
     @GET("weather?")
-    suspend fun getWeather(@Query("q") cityName: String): WeatherResponse
+    suspend fun getWeather(@Query("q") cityName: String): WeatherUnlocked
 
-    @GET("weather?")
-    suspend fun getWeather(@Query("id") cityId: Int): WeatherResponse
-
-    @GET("weather?")
+    @GET("current/{lat},{lon}")
     suspend fun getWeather(
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double
-    ): WeatherResponse
+        @Path("lat") lat: Double,
+        @Path("lon") lon: Double
+    ): WeatherUnlocked
 
-    @GET("find?")
-    suspend fun getNearCity(
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double,
-        @Query("cnt") count: Int
-    ): WeatherResponseList
+    @GET("forecast/{lat},{lon}")
+    suspend fun getWeatherForecast(
+        @Path("lat") lat: Double,
+        @Path("lon") lon: Double
+    ): WeatherUnlockedForecast
 }

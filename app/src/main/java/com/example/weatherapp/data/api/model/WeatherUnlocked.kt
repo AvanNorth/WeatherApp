@@ -1,5 +1,7 @@
 package com.example.weatherapp.data.api.model
 
+import com.google.gson.annotations.SerializedName
+
 data class WeatherUnlocked(
     val alt_ft: Double,
     val alt_m: Double,

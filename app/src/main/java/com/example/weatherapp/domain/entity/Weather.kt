@@ -10,4 +10,5 @@ data class Weather(
     val humidity: Double,
     val windSpeed: Double,
     val windDir: String,
+    val wx_desc: String
 )
