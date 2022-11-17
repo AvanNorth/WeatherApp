@@ -11,9 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
@@ -22,6 +19,7 @@ import com.example.weatherapp.databinding.FragmentCurLocationBinding
 import com.example.weatherapp.domain.entity.City
 import com.example.weatherapp.domain.entity.Weather
 import com.example.weatherapp.domain.entity.WeatherForecast
+import com.example.weatherapp.ui.utils.ContextExtensions.visible
 import com.example.weatherapp.ui.viewmodel.CurLocationWeatherViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -29,7 +27,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -37,8 +34,6 @@ class CurLocationFragment : Fragment() {
 
     private lateinit var binding: FragmentCurLocationBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var navController: NavController
-    private lateinit var adapter: WeatherAdapter
 
     private val viewModel: CurLocationWeatherViewModel by viewModels()
 
@@ -57,7 +52,6 @@ class CurLocationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var navController = NavHostFragment.findNavController(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
@@ -72,6 +66,9 @@ class CurLocationFragment : Fragment() {
             tempTV.text = getString(R.string.temp_text, weather.temp)
             windTV.text = getString(R.string.wind_spd_text, weather.windSpeed)
             windDirTV.text = getString(R.string.wind_dir_text, weather.windDir)
+            humTV.text = getString(R.string.humidity_text, weather.humidity)
+            visTV.text = getString(R.string.visibility_text, weather.vis)
+
             Picasso.get()
                 .load(
                     "http://www.weatherunlocked.com/Images/icons/2/${
@@ -82,12 +79,14 @@ class CurLocationFragment : Fragment() {
                     }"
                 ).fit()
                 .placeholder(R.drawable.ic_launcher_foreground)
-                .into(binding.tempIcon, object : Callback {
+                .into(binding.wxIcoIV, object : Callback {
                     override fun onSuccess() {}
                     override fun onError(e: Exception?) {
                         Timber.e("Picasso", e?.message.toString())
                     }
                 })
+
+            hideLoadingBar()
         }
     }
 
@@ -100,7 +99,8 @@ class CurLocationFragment : Fragment() {
 
     private fun initWeekWeatherData(forecast: WeatherForecast) {
         val weatherList: RecyclerView = binding.weekTempList
-        weatherList.layoutManager = LinearLayoutManager(requireContext())
+        weatherList.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         weatherList.adapter = WeatherAdapter(forecast, requireContext())
     }
 
@@ -139,42 +139,80 @@ class CurLocationFragment : Fragment() {
     }
 
     private fun getLocation() {
-        lifecycleScope.launch {
-            try {
-                if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    registerForActivityResult(
-                        ActivityResultContracts.RequestPermission()
-                    ) { isGranted: Boolean ->
-                        if (!isGranted) {
-                            Snackbar.make(
-                                requireActivity().findViewById(android.R.id.content),
-                                "Error: permission not granted",
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
+        showLoadingBar()
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            activityResultLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+            return
+        } else {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        lat = location.latitude
+                        lon = location.longitude
+                        viewModel.getWeatherByCoords(lat, lon)
+                    } else {
+                        Snackbar.make(
+                            binding.root,
+                            "error getting location",
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
-
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location: Location? ->
-                        if (location != null) {
-                            lat = location.latitude
-                            lon = location.longitude
-                        }
-                    }
-            } catch (e: SecurityException) {
-                Timber.e(e.message.toString())
-            }
         }
-        viewModel.getWeatherByCoords(lat, lon)
     }
 
+    private fun hideLoadingBar() {
+        binding.curLocPB.visible(false)
+        binding.curLocationContainer.visible(true)
+    }
 
+    private fun showLoadingBar() {
+        binding.curLocationContainer.visible(false)
+        binding.curLocPB.visible(true)
+    }
+
+    private val activityResultLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        )
+        { permissions ->
+            permissions.entries.forEach {
+                val isGranted = it.value
+                if (isGranted) {
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location: Location? ->
+                            if (location != null) {
+                                lat = location.latitude
+                                lon = location.longitude
+                                viewModel.getWeatherByCoords(lat, lon)
+                            } else {
+                                Snackbar.make(
+                                    binding.root,
+                                    "error getting location",
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                } else {
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.perm_error),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
 }

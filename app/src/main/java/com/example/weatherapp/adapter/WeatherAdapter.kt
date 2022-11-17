@@ -14,8 +14,7 @@ class WeatherAdapter(private val weatherForecast: WeatherForecast, private val c
     class WeatherViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val minTempTV: TextView = itemView.findViewById(R.id.minTempTV)
         val maxTempTV: TextView = itemView.findViewById(R.id.maxTempTV)
-        val date: TextView = itemView.findViewById(R.id.dateTV)
-        val windSpeed: TextView = itemView.findViewById(R.id.windSpdMaxTV)
+        val date: TextView = itemView.findViewById(R.id.searchCityTV)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
@@ -32,8 +31,6 @@ class WeatherAdapter(private val weatherForecast: WeatherForecast, private val c
             holder.maxTempTV.text =
                 getString(R.string.temp_text, weatherForecast.list[position].maxTemp)
             holder.date.text = weatherForecast.list[position].date
-            holder.windSpeed.text =
-                getString(R.string.wind_spd_text, weatherForecast.list[position].windSpdMax)
         }
     }
 

@@ -20,7 +20,10 @@ class WeatherMapper() {
         desc = response.wx_desc,
         icon = response.wx_icon,
         humidity = response.humid_pct,
-        wx_desc = response.wx_desc
+        wx_desc = response.wx_desc,
+        vis = response.vis_km,
+        slpMb = response.slp_mb,
+        devPoint = response.dewpoint_c
     )
 
     private fun toDayWeather(response: Day): DayWeather = DayWeather(

@@ -6,10 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.CurLocationFragment">
 
-    <ImageView
-        android:id="@+id/temp_icon"
+    <ProgressBar
+        android:id="@+id/curLocPB"
+        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/curLocationContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/curLocationContainer" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/curLocationContainer"
+        >
+
+    <ImageView
+        android:id="@+id/wxIcoIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/countryTV"
@@ -22,10 +39,10 @@
         android:text="@string/temp_text"
         android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/temp_icon"
+        app:layout_constraintEnd_toEndOf="@+id/wxIcoIV"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/temp_icon"
-        app:layout_constraintTop_toBottomOf="@+id/temp_icon"
+        app:layout_constraintStart_toStartOf="@+id/wxIcoIV"
+        app:layout_constraintTop_toBottomOf="@+id/wxIcoIV"
         app:layout_constraintVertical_bias="0.03" />
 
     <TextView
@@ -43,13 +60,11 @@
         android:id="@+id/skyTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Sky"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tempTV"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tempTV"
-        app:layout_constraintTop_toBottomOf="@+id/tempTV"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintEnd_toEndOf="@+id/tempFeelTV"
+        app:layout_constraintStart_toStartOf="@+id/tempFeelTV"
+        app:layout_constraintTop_toBottomOf="@+id/tempFeelTV" />
 
     <TextView
         android:id="@+id/countryTV"
@@ -64,20 +79,20 @@
         android:id="@+id/windTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Wind speed"
-        app:layout_constraintBottom_toTopOf="@+id/windDirTV"
         app:layout_constraintEnd_toEndOf="@+id/skyTV"
         app:layout_constraintStart_toStartOf="@+id/skyTV"
-        app:layout_constraintTop_toBottomOf="@+id/tempFeelTV" />
+        app:layout_constraintTop_toBottomOf="@+id/skyTV" />
 
     <TextView
         android:id="@+id/windDirTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin = "5dp"
+        android:layout_margin="5dp"
         android:text="Wind direction"
-        app:layout_constraintEnd_toEndOf="@+id/skyTV"
-        app:layout_constraintStart_toStartOf="@+id/skyTV"
+        app:layout_constraintEnd_toEndOf="@+id/windTV"
+        app:layout_constraintStart_toStartOf="@+id/windTV"
         app:layout_constraintTop_toBottomOf="@+id/windTV" />
 
     <TextView
@@ -86,17 +101,19 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/windTV"
-        app:layout_constraintEnd_toEndOf="@+id/skyTV"
-        app:layout_constraintStart_toStartOf="@+id/skyTV"
-        app:layout_constraintTop_toBottomOf="@+id/skyTV"
+        app:layout_constraintEnd_toEndOf="@+id/tempTV"
+        app:layout_constraintStart_toStartOf="@+id/tempTV"
+        app:layout_constraintTop_toBottomOf="@+id/tempTV"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/weekTempList"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weekTempTV" />
 
@@ -104,10 +121,32 @@
         android:id="@+id/weekTempTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/week_temp_text"
         android:layout_margin="10dp"
+        android:text="@string/week_temp_text"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/windDirTV" />
+
+    <TextView
+        android:id="@+id/humTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/humidity_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weekTempList" />
+
+    <TextView
+        android:id="@+id/visTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/visibility_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/humTV" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

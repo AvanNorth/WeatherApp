@@ -11,4 +11,10 @@ interface GeoCodeApi {
         @Query("lon") lon: Double,
         @Query("limit") limit: Int = 5,
         ): CityResponse
+
+    @GET("direct?")
+    suspend fun getCity(
+        @Query("q") query: String,
+        @Query("limit") limit: Int = 5,
+        ): CityResponse
 }

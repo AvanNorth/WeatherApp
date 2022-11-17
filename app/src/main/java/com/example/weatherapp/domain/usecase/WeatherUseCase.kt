@@ -11,7 +11,7 @@ import javax.inject.Inject
 class WeatherUseCase @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) {
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 
     suspend fun getWeatherByName(cityName: String): Weather {
         return withContext(dispatcher) {

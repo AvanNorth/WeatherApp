@@ -2,11 +2,9 @@ package com.example.weatherapp.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
-import com.example.weatherapp.R
 import com.example.weatherapp.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.weatherapp.ui.vp.ViewPagerAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,8 +18,28 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        navView.setupWithNavController(navController)
+        setupNavigation()
     }
+
+    private fun setupNavigation() {
+        with(binding) {
+            val list = listOf("Home","Search")
+
+            binding.vp2.adapter = ViewPagerAdapter(this@MainActivity)
+
+            TabLayoutMediator(tabLayout, vp2) { tab, position ->
+                tab.text = list[position]
+            }.attach()
+        }
+    }
+
+    override fun onBackPressed() {
+        val viewPager = binding.vp2
+        if (viewPager.currentItem == 0) {
+            super.onBackPressed()
+        } else {
+            viewPager.currentItem = viewPager.currentItem - 1
+        }
+    }
+
 }

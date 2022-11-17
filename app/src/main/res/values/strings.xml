@@ -3,9 +3,13 @@
     <string name="title_cur_location">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="perm_error">Ошибка: не выдано разрешение</string>
     <string name="week_temp_text">Погода на неделю</string>
     <string name="wind_spd_text">Ветер %1$.1f км/ч</string>
     <string name="temp_text">%1$.1f C</string>
     <string name="wind_dir_text">направление ветра %1$s</string>
-    <string name="feel_like_text">ощущается как %1$.1f</string>
+    <string name="feel_like_text">ощущается как %1$.1f C</string>
+    <string name="humidity_text">влажность %1$.1f %%</string>
+    <string name="visibility_text">видимость %1$.1f км</string>
+    <string name="search_hint_text">Чтобы посмотреть погоду в других городах, воспользуйтесь поиском</string>
 </resources>
